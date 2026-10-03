@@ -7,7 +7,7 @@ app.use(express.json());
 // ================= TWILIO CONFIGURATION =================
 // Replace these placeholders with your actual Twilio Account credentials
 const accountSid = 'AC3c35266c015dcdd882a62c9e1b08d525';
-const authToken  = 'e6900382a43641fe192aa670c676b50e';
+const authToken  = '70dc1ca5036deeef18c00ebded380fa1';
 const client     = twilio(accountSid, authToken);
 
 // Your Twilio Sandbox WhatsApp Number
