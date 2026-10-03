@@ -1,7 +1,7 @@
 const express = require('express');
 const twilio = require('twilio');
-
 const app = express();
+
 app.use(express.json());
 
 // ================= TWILIO CONFIGURATION =================
@@ -19,10 +19,15 @@ const emergencyContacts = [
     'whatsapp:+918448234755',
     'whatsapp:+919560124333'
 ];
-// =======================================================
 
+// Root endpoint for browser status check
+app.get('/', (req, res) => {
+    res.status(200).send('🚀 Vamika Backend Server is Live & Running!');
+});
+
+// =======================================================
 // Webhook Endpoint triggered by ESP32
-app.post('/api/alert', async (req, res) => {
+app.post('/send-alert', async (req, res) => {
     const { message, location } = req.body;
 
     if (!message) {
@@ -44,6 +49,7 @@ app.post('/api/alert', async (req, res) => {
         await Promise.all(dispatchPromises);
         console.log('✅ Emergency alert dispatched to ALL WhatsApp contacts!');
         res.status(200).json({ status: 'Success', recipients: emergencyContacts.length });
+
     } catch (error) {
         console.error('❌ Error dispatching WhatsApp messages:', error);
         res.status(500).json({ error: error.message });
