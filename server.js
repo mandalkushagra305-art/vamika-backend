@@ -17,7 +17,7 @@ const twilioNumber = 'whatsapp:+17372508034';
 // Add all emergency recipient numbers here in international format (+91...)
 const emergencyContacts = [
     'whatsapp:+918448234755',
-    'whatsapp:+919560124333'
+    // 'whatsapp:+919560124333'
 ];
 
 // Root endpoint for browser status check
