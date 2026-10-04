@@ -5,8 +5,8 @@ app.use(express.json());
 
 // ================= META CLOUD API CONFIGURATION =================
 // Cooldown ke baad milne wale credentials yahan daalein ya Render Environment Variables me set karein:
-const WHATSAPP_TOKEN = process.env.WHATSAPP_TOKEN || 'PASTE_YOUR_TEMPORARY_ACCESS_TOKEN_HERE';
-const PHONE_NUMBER_ID = process.env.PHONE_NUMBER_ID || 'PASTE_YOUR_PHONE_NUMBER_ID_HERE';
+const WHATSAPP_TOKEN = process.env.WHATSAPP_TOKEN || 'EAGYuj5Wiz0MBSnywjberMt7pZAUDYL84EhljMrKuQsfIXnGrKZBKTyzfqk0zJ7Gkng1InjZCZCnAnzbVKvgPEZCZCgg7JFIRJrOkOnZAAERNcR6XtpGTRDzqUdNh0Ill5Dy8OiEgT7v3SBMGgklktijFBFmcWoxOgvYHOFTqd298YZB4aBgkZCZCRurLx8O39AO4meMJZAoo39dTEMjZBsgixsZAUlvKJn5IVc0kd0s51TuBjxqKBDCaWbrkjk332lDFlNpjItIzJ7P64AZAWP0CNlZCmWCMl69';
+const PHONE_NUMBER_ID = process.env.PHONE_NUMBER_ID || '1427869750400760';
 
 // Emergency Contact Numbers (Country code ke saath, e.g., 918448234755)
 const emergencyContacts = [
