@@ -3,51 +3,58 @@ const app = express();
 
 app.use(express.json());
 
-// ================= TWILIO CONFIGURATION =================
-const accountSid = 'AC3c35266c015dcdd882a62c9e1b08d525';
-const authToken  = '70dc1ca5036deeef18c00ebded380fa1';
-const twilioNumber = 'whatsapp:+17372508034'; 
+// ================= META CLOUD API CONFIGURATION =================
+// Cooldown ke baad milne wale credentials yahan daalein ya Render Environment Variables me set karein:
+const WHATSAPP_TOKEN = process.env.WHATSAPP_TOKEN || 'PASTE_YOUR_TEMPORARY_ACCESS_TOKEN_HERE';
+const PHONE_NUMBER_ID = process.env.PHONE_NUMBER_ID || 'PASTE_YOUR_PHONE_NUMBER_ID_HERE';
 
-// ================= EMERGENCY CONTACTS =================
+// Emergency Contact Numbers (Country code ke saath, e.g., 918448234755)
 const emergencyContacts = [
-    'whatsapp:+918448234755'
+    '918448234755'
 ];
 
 app.get('/', (req, res) => {
     res.status(200).send('🚀 Vamika Backend Server is Live & Running!');
 });
 
-// Webhook Endpoint
+// Webhook Endpoint for Emergency Alert
 app.post('/send-alert', async (req, res) => {
+    const { message, location } = req.body;
+
+    const alertText = message || '🚨 EMERGENCY ALERT TRIGGERED!';
+    const fullMessage = location ? `${alertText}\n📍 Location: ${location}` : alertText;
+
     try {
-        const authHeader = 'Basic ' + Buffer.from(`${accountSid}:${authToken}`).toString('base64');
+        const dispatchPromises = emergencyContacts.map(async (recipientNumber) => {
+            const url = `https://graph.facebook.com/v18.0/${PHONE_NUMBER_ID}/messages`;
 
-        const dispatchPromises = emergencyContacts.map(async (contact) => {
-            const formData = new URLSearchParams();
-            formData.append('From', twilioNumber);
-            formData.append('To', contact);
-            // Twilio Sandbox ka pre-approved default template ID
-            formData.append('ContentSid', 'HXb5b62575e6e4ff6129ad7c8efe1f983e'); 
+            const payload = {
+                messaging_product: 'whatsapp',
+                recipient_type: 'individual',
+                to: recipientNumber,
+                type: 'text',
+                text: { preview_url: false, body: fullMessage }
+            };
 
-            const response = await fetch(`https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`, {
+            const response = await fetch(url, {
                 method: 'POST',
                 headers: {
-                    'Authorization': authHeader,
-                    'Content-Type': 'application/x-www-form-urlencoded'
+                    'Authorization': `Bearer ${WHATSAPP_TOKEN}`,
+                    'Content-Type': 'application/json'
                 },
-                body: formData.toString()
+                body: JSON.stringify(payload)
             });
 
-            const responseData = await response.json();
+            const data = await response.json();
             if (!response.ok) {
-                console.error('Twilio Direct API Response Error:', responseData);
-                throw new Error(responseData.message || 'Twilio Request Failed');
+                console.error('Meta API Response Error:', data);
+                throw new Error(data.error?.message || 'Meta API Request Failed');
             }
-            return responseData;
+            return data;
         });
 
         await Promise.all(dispatchPromises);
-        console.log('✅ Emergency alert dispatched successfully via Template!');
+        console.log('✅ Emergency alert dispatched successfully via Meta Cloud API!');
         res.status(200).json({ status: 'Success', recipients: emergencyContacts.length });
 
     } catch (error) {
